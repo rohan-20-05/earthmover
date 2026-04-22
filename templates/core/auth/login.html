@@ -1,0 +1,38 @@
+<!-- templates/core/auth/login.html -->
+{% extends 'base.html' %}
+{% block title %}Login — Earthmover{% endblock %}
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center py-5" style="background: var(--dark);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card p-4 p-md-5" style="border:1px solid rgba(244,161,29,0.2);">
+          <div class="text-center mb-4">
+            <div style="font-size:3rem;">🔐</div>
+            <h2 style="color:#fff; font-family:'Barlow Condensed',sans-serif;">WELCOME BACK</h2>
+            <p class="text-muted small">Login with your phone number</p>
+          </div>
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">{{ field.errors|first }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+          </form>
+          <p class="text-center text-muted small mt-4 mb-0">
+            New here? <a href="{% url 'register' %}" style="color:var(--primary);">Create Account</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

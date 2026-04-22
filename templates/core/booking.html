@@ -1,0 +1,153 @@
+<!-- templates/core/booking.html -->
+{% extends 'base.html' %}
+{% block title %}Book Equipment — Earthmover{% endblock %}
+
+{% block extra_css %}
+<style>
+  #calendar { background: var(--dark2); border-radius: 12px; padding: 1.5rem; }
+  .fc-theme-standard td, .fc-theme-standard th { border-color: rgba(255,255,255,0.07); }
+  .fc-col-header-cell-cushion, .fc-daygrid-day-number { color: #e0e0e0 !important; }
+  .fc-toolbar-title { color: #fff !important; font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; }
+  .fc-button { background: var(--dark3) !important; border-color: transparent !important; color: #fff !important; }
+  .fc-button:hover { background: var(--primary) !important; color: #000 !important; }
+  .fc-button-primary:not(:disabled).fc-button-active { background: var(--primary) !important; color: #000 !important; }
+  .fc-daygrid-day:hover { background: rgba(244,161,29,0.05); cursor: pointer; }
+  .fc-daygrid-day.fc-day-today { background: rgba(244,161,29,0.08) !important; }
+  .booking-legend { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="container">
+    <h1 style="color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:2.5rem;">
+      BOOK <span style="color:var(--primary);">EQUIPMENT</span>
+    </h1>
+    <p class="text-muted">Select your machine, choose a date & time slot, confirm your booking.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <div class="row g-5">
+
+      <!-- ── BOOKING FORM ── -->
+      <div class="col-lg-5">
+        <div class="card p-4">
+          <h4 style="color:#fff; font-family:'Barlow Condensed',sans-serif;" class="mb-4">
+            <i class="bi bi-calendar-plus text-warning me-2"></i>BOOKING DETAILS
+          </h4>
+          <form method="post" id="bookingForm">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">{{ field.errors|first }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger small">{{ form.non_field_errors|first }}</div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary w-100 py-3 mt-2">
+              <i class="bi bi-check-circle me-2"></i>Confirm Booking
+            </button>
+          </form>
+        </div>
+
+        <!-- Pricing Info -->
+        <div class="card p-4 mt-4">
+          <h6 style="color:var(--primary); font-family:'Barlow Condensed',sans-serif; font-size:1rem;" class="mb-3">
+            <i class="bi bi-info-circle me-2"></i>PRICING INFO
+          </h6>
+          {% for m in machines %}
+          <div class="d-flex justify-content-between py-2 border-bottom border-secondary">
+            <span class="text-muted small">{{ m.name }}</span>
+            <span style="color:#fff; font-weight:600;">₹{{ m.hourly_rate }}/hr</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ── CALENDAR ── -->
+      <div class="col-lg-7">
+        <div class="card p-4">
+          <h4 style="color:#fff; font-family:'Barlow Condensed',sans-serif;" class="mb-4">
+            <i class="bi bi-calendar3 text-warning me-2"></i>AVAILABILITY CALENDAR
+          </h4>
+          <div class="mb-3">
+            <label class="form-label">Filter by Machine</label>
+            <select class="form-select" id="calendarMachineFilter">
+              <option value="">All Machines</option>
+              {% for m in machines %}
+                <option value="{{ m.id }}">{{ m.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id="calendar"></div>
+          <div class="booking-legend">
+            <span><span class="legend-dot me-1" style="background:#e74c3c;"></span>
+              <small class="text-muted">Booked Slot</small></span>
+            <span><span class="legend-dot me-1" style="background:rgba(244,161,29,0.5);"></span>
+              <small class="text-muted">Today</small></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const calendarEl = document.getElementById('calendar');
+  const machineFilter = document.getElementById('calendarMachineFilter');
+  const dateInput = document.querySelector('input[name="date"]');
+  const startInput = document.querySelector('input[name="start_time"]');
+
+  let calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+    themeSystem: 'standard',
+    height: 'auto',
+    events: '/api/booked-slots/',
+    eventClick: function(info) {
+      alert(`⛔ ${info.event.title}\nStatus: ${info.event.extendedProps.status}`);
+    },
+    dateClick: function(info) {
+      if (dateInput) {
+        dateInput.value = info.dateStr;
+        if (startInput) startInput.focus();
+      }
+    },
+    eventColor: '#e74c3c',
+  });
+
+  calendar.render();
+
+  // Refresh calendar when machine filter changes
+  machineFilter.addEventListener('change', function () {
+    calendar.removeAllEventSources();
+    const machineId = this.value;
+    const url = machineId
+      ? `/api/booked-slots/?machine_id=${machineId}`
+      : '/api/booked-slots/';
+    calendar.addEventSource(url);
+  });
+
+  // Sync machine select in form with calendar filter
+  const machineSelect = document.querySelector('select[name="machine"]');
+  if (machineSelect) {
+    machineSelect.addEventListener('change', function () {
+      machineFilter.value = this.value;
+      machineFilter.dispatchEvent(new Event('change'));
+    });
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,328 @@
+<!-- templates/core/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Earthmover — Heavy Equipment Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 40%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f4a11d' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(244,161,29,0.15);
+    border: 1px solid rgba(244,161,29,0.4);
+    color: var(--primary);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 span { color: var(--primary); }
+  .hero p.lead {
+    font-size: 1.1rem;
+    color: #8892a4;
+    max-width: 500px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .hero-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── Machine Cards ── */
+  .machine-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    height: 100%;
+  }
+  .machine-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border-color: var(--primary);
+  }
+  .machine-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    background: var(--dark3);
+  }
+  .machine-card .img-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, var(--dark3), #0d0d1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .machine-card .card-body { padding: 1.5rem; }
+  .machine-card .card-title { color: #fff; font-size: 1.3rem; }
+  .machine-card .badge-capacity {
+    background: rgba(244,161,29,0.15);
+    color: var(--primary);
+    border: 1px solid rgba(244,161,29,0.3);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .machine-card .rate {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* ── Feedback Cards ── */
+  .feedback-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+  }
+  .stars { color: var(--primary); font-size: 1.1rem; }
+
+  /* ── Why Us ── */
+  .feature-icon {
+    width: 60px; height: 60px;
+    background: rgba(244,161,29,0.1);
+    border: 1px solid rgba(244,161,29,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: var(--primary);
+    margin-bottom: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <div class="hero-badge"><i class="bi bi-shield-check me-2"></i>Trusted Since 2010</div>
+        <h1>MOVE <span>EARTH.</span><br>BUILD <span>DREAMS.</span></h1>
+        <p class="lead">Professional earthmoving and heavy equipment rental services for construction, mining, and infrastructure projects.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'booking' %}" class="btn btn-primary btn-lg px-5 py-3">
+            <i class="bi bi-calendar-plus me-2"></i>Book Equipment
+          </a>
+          <a href="#portfolio" class="btn btn-outline-primary btn-lg px-5 py-3">
+            View Fleet
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">150+</div>
+            <div class="hero-stat-label">Projects Done</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">{{ machines.count }}+</div>
+            <div class="hero-stat-label">Machines</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">14</div>
+            <div class="hero-stat-label">Years Experience</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+        <div style="font-size: 18rem; opacity: 0.07; line-height: 1;">🏗️</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY CHOOSE US ── -->
+<section class="section" style="background: var(--dark2);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">WHY CHOOSE <span>US</span></h2>
+      <p class="section-subtitle">Industry-leading equipment with professional operators</p>
+    </div>
+    <div class="row g-4">
+      {% for icon, title, desc in features %}
+      <div class="col-md-3">
+        <div class="feature-icon"><i class="bi bi-{{ icon }}"></i></div>
+        <h5 style="color:#fff; font-family: 'Barlow Condensed',sans-serif;">{{ title }}</h5>
+        <p style="color:var(--text-muted); font-size:0.9rem;">{{ desc }}</p>
+      </div>
+      {% empty %}
+      {% for item in "1234" %}
+      <div class="col-md-3">
+        {% if forloop.counter == 1 %}
+          <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+          <h5 style="color:#fff; font-family:'Barlow Condensed',sans-serif;">24/7 Availability</h5>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Equipment ready whenever your project demands, day or night.</p>
+        {% elif forloop.counter == 2 %}
+          <div class="feature-icon"><i class="bi bi-person-check"></i></div>
+          <h5 style="color:#fff; font-family:'Barlow Condensed',sans-serif;">Trained Operators</h5>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Certified professionals with years of field experience.</p>
+        {% elif forloop.counter == 3 %}
+          <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+          <h5 style="color:#fff; font-family:'Barlow Condensed',sans-serif;">Fully Insured</h5>
+          <p style="color:var(--text-muted); font-size:0.9rem;">All equipment and operators covered with comprehensive insurance.</p>
+        {% elif forloop.counter == 4 %}
+          <div class="feature-icon"><i class="bi bi-graph-up"></i></div>
+          <h5 style="color:#fff; font-family:'Barlow Condensed',sans-serif;">Competitive Rates</h5>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Best market rates with transparent, no-surprise pricing.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO / MACHINES ── -->
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">OUR <span>FLEET</span></h2>
+      <p class="section-subtitle">Heavy machinery for every job — available for immediate booking</p>
+    </div>
+
+    {% if machines %}
+    <div class="row g-4">
+      {% for machine in machines %}
+      <div class="col-md-6 col-lg-4">
+        <div class="machine-card">
+          {% if machine.image %}
+            <img src="{{ machine.image.url }}" class="card-img-top" alt="{{ machine.name }}">
+          {% else %}
+            <div class="img-placeholder">
+              <i class="bi bi-truck text-warning" style="font-size: 4rem; opacity: 0.4;"></i>
+            </div>
+          {% endif %}
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="card-title mb-0">{{ machine.name }}</h5>
+              <span class="badge-capacity">{{ machine.capacity }}</span>
+            </div>
+            <p class="text-muted small mb-3">{{ machine.description|truncatewords:20 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="rate">₹{{ machine.hourly_rate }}</div>
+                <small class="text-muted">/hour</small>
+              </div>
+              <a href="{% url 'booking' %}?machine={{ machine.id }}" class="btn btn-primary btn-sm px-4">
+                Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-truck text-warning" style="font-size:4rem; opacity:0.3;"></i>
+      <p class="text-muted mt-3">No machines listed yet. Check back soon or <a href="{% url 'contact' %}">contact us</a>.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ── REVIEWS ── -->
+{% if feedbacks %}
+<section class="section" style="background: var(--dark2);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">CLIENT <span>REVIEWS</span></h2>
+      <p class="section-subtitle">What our customers say about us</p>
+    </div>
+    <div class="row g-4">
+      {% for fb in feedbacks %}
+      <div class="col-md-6 col-lg-4">
+        <div class="feedback-card">
+          <div class="stars mb-2">
+            {% for i in "12345" %}
+              {% if forloop.counter <= fb.rating %}
+                <i class="bi bi-star-fill"></i>
+              {% else %}
+                <i class="bi bi-star text-muted"></i>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <p class="text-muted small mb-3">"{{ fb.comment|truncatewords:30 }}"</p>
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                 style="width:36px;height:36px;background:rgba(244,161,29,0.2);color:var(--primary);font-weight:700;font-size:0.9rem;">
+              {{ fb.user.name|first|upper }}
+            </div>
+            <div>
+              <div style="color:#fff; font-size:0.85rem; font-weight:600;">{{ fb.user.name }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">{{ fb.created_at|date:"M Y" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'feedback' %}" class="btn btn-outline-primary px-5">Leave a Review</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── CTA ── -->
+<section class="section" style="background: linear-gradient(135deg, var(--dark3), var(--dark));">
+  <div class="container text-center">
+    <h2 class="section-title">READY TO <span>START?</span></h2>
+    <p class="section-subtitle">Book your equipment online in under 2 minutes</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{% url 'booking' %}" class="btn btn-primary btn-lg px-5 py-3">
+        <i class="bi bi-calendar-plus me-2"></i>Book Now
+      </a>
+      <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg px-5 py-3">
+        Contact Us
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
