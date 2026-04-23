@@ -49,18 +49,24 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 # MACHINE / EQUIPMENT
 # ════════════════════════════════════════════════
 class Machine(models.Model):
-    name        = models.CharField(max_length=200)
-    description = models.TextField()
-    image       = models.ImageField(upload_to='machines/', blank=True, null=True)
-    capacity    = models.CharField(max_length=100, help_text="e.g. 20 Ton, 5 CY")
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    name         = models.CharField(max_length=200)
+    description  = models.TextField()
+    image        = models.ImageField(upload_to='machines/', blank=True, null=True)
+    image_url    = models.URLField(blank=True, null=True, help_text="Paste image URL from Google/Imgur")
+    capacity     = models.CharField(max_length=100)
+    hourly_rate  = models.DecimalField(max_digits=10, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    created_at  = models.DateTimeField(auto_now_add=True)
+    created_at   = models.DateTimeField(auto_now_add=True)
+
+    def get_image(self):
+        if self.image_url:
+            return self.image_url
+        if self.image:
+            return self.image.url
+        return None
 
     def __str__(self):
         return self.name
-
-
 # ════════════════════════════════════════════════
 # BOOKING
 # ════════════════════════════════════════════════
@@ -163,3 +169,6 @@ class Query(models.Model):
 
     def __str__(self):
         return f"[{self.status.upper()}] {self.subject} — {self.name}"
+    
+
+    
