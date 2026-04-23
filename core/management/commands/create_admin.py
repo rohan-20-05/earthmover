@@ -1,33 +1,28 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth.hashers import make_password
 from core.models import CustomUser
 
 
 class Command(BaseCommand):
-    help = 'Force create superuser'
+    help = 'Fresh superuser creation'
 
     def handle(self, *args, **kwargs):
-        phone    = '9167164491'
-        name     = 'Admin'
-        password = 'Admin@1234'
+        # Step 1: Wipe everything
+        CustomUser.objects.all().delete()
+        self.stdout.write('All users deleted.')
 
-        # Delete all existing superusers
-        CustomUser.objects.filter(is_superuser=True).delete()
-        self.stdout.write(self.style.WARNING('Deleted old superusers.'))
-
-        # Create fresh one
-        user = CustomUser.objects.create_superuser(
-            phone=phone,
-            name=name,
-            password=password
+        # Step 2: Create fresh superuser manually
+        user = CustomUser(
+            phone='9167164491',
+            name='Admin',
+            is_active=True,
+            is_staff=True,
+            is_superuser=True,
         )
-
-        # Force all flags to be correct
-        user.is_active    = True
-        user.is_staff     = True
-        user.is_superuser = True
+        user.password = make_password('Admin@1234')
         user.save()
 
-        self.stdout.write(self.style.SUCCESS(f'Superuser created: {user.phone}'))
-        self.stdout.write(self.style.SUCCESS(f'is_active={user.is_active}'))
-        self.stdout.write(self.style.SUCCESS(f'is_staff={user.is_staff}'))
-        self.stdout.write(self.style.SUCCESS(f'is_superuser={user.is_superuser}'))
+        self.stdout.write(f'Created: {user.phone}')
+        self.stdout.write(f'is_active: {user.is_active}')
+        self.stdout.write(f'is_staff: {user.is_staff}')
+        self.stdout.write(f'is_superuser: {user.is_superuser}')
