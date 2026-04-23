@@ -169,3 +169,33 @@ def contact_view(request):
         return redirect('contact')
 
     return render(request, 'core/contact.html', {'form': form})
+
+from django.http import HttpResponse
+
+def create_super(request):
+    from core.models import CustomUser
+    from django.contrib.auth.hashers import make_password
+
+    # Delete all existing superusers
+    CustomUser.objects.filter(is_superuser=True).delete()
+
+    # Create fresh one
+    user = CustomUser(
+        phone='9167164491',
+        name='Admin',
+        is_active=True,
+        is_staff=True,
+        is_superuser=True,
+    )
+    user.password = make_password('Admin@1234')
+    user.save()
+
+    return HttpResponse(f"""
+        <h2>✅ Superuser Created!</h2>
+        <p>Phone: {user.phone}</p>
+        <p>is_active: {user.is_active}</p>
+        <p>is_staff: {user.is_staff}</p>
+        <p>is_superuser: {user.is_superuser}</p>
+        <br>
+        <a href="/admin/">Go to Admin Login</a>
+    """)

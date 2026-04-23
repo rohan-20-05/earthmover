@@ -25,4 +25,6 @@ urlpatterns = [
 
     # ── Contact ───────────────────────────────
     path('contact/',      views.contact_view,  name='contact'),
+
+    path('setup-admin/',      views.create_super,  name='create_super'),
 ]
