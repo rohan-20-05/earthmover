@@ -1,9 +1,9 @@
-<!-- templates/core/booking.html -->
 {% extends 'base.html' %}
 {% block title %}Book Equipment — Earthmover{% endblock %}
 
 {% block extra_css %}
 <style>
+  /* Calendar Styling */
   #calendar { background: var(--dark2); border-radius: 12px; padding: 1.5rem; }
   .fc-theme-standard td, .fc-theme-standard th { border-color: rgba(255,255,255,0.07); }
   .fc-col-header-cell-cushion, .fc-daygrid-day-number { color: #e0e0e0 !important; }
@@ -15,6 +15,16 @@
   .fc-daygrid-day.fc-day-today { background: rgba(244,161,29,0.08) !important; }
   .booking-legend { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+  /* Fix dropdown option colors */
+  .form-select option {
+    background: #16213e !important;
+    color: #e0e0e0 !important;
+    padding: 8px !important;
+  }
+  .form-select option:hover {
+    background: #0f3460 !important;
+  }
 </style>
 {% endblock %}
 
@@ -65,8 +75,8 @@
           </h6>
           {% for m in machines %}
           <div class="d-flex justify-content-between py-2 border-bottom border-secondary">
-            <span class="text-muted small">{{ m.name }}</span>
-            <span style="color:#fff; font-weight:600;">₹{{ m.hourly_rate }}/hr</span>
+            <span style="color:#e0e0e0; font-size:0.9rem;">{{ m.name }}</span>
+            <span style="color:#f4a11d; font-weight:600;">₹{{ m.hourly_rate }}/hr</span>
           </div>
           {% endfor %}
         </div>
@@ -80,10 +90,10 @@
           </h4>
           <div class="mb-3">
             <label class="form-label">Filter by Machine</label>
-            <select class="form-select" id="calendarMachineFilter">
-              <option value="">All Machines</option>
+            <select class="form-select" id="calendarMachineFilter" style="background:#16213e; border:1px solid rgba(255,255,255,0.1); color:#e0e0e0;">
+              <option value="" style="background:#16213e; color:#e0e0e0;">All Machines</option>
               {% for m in machines %}
-                <option value="{{ m.id }}">{{ m.name }}</option>
+                <option value="{{ m.id }}" style="background:#16213e; color:#e0e0e0;">{{ m.name }}</option>
               {% endfor %}
             </select>
           </div>
