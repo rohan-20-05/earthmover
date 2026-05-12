@@ -55,12 +55,12 @@ class CustomUserAdmin(UserAdmin):
 
 
 # ─── Machine Admin ───────────────────────────────────────
-@admin.register(Machine)
-class MachineAdmin(admin.ModelAdmin):
-    list_display  = ['name', 'capacity', 'hourly_rate', 'is_available']
-    list_filter   = ['is_available']
-    search_fields = ['name']
-    list_editable = ['is_available', 'hourly_rate']
+#@admin.register(Machine)
+#class MachineAdmin(admin.ModelAdmin):
+    #ist_display  = ['name', 'capacity', 'hourly_rate', 'is_available']
+    #list_filter   = ['is_available']
+    #search_fields = ['name']
+    #list_editable = ['is_available', 'hourly_rate']
 
 
 # ─── Booking Admin ───────────────────────────────────────

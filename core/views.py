@@ -10,16 +10,17 @@ from django.views.decorators.http import require_POST
 
 from .models import Machine, Booking, Feedback, Query
 from .forms import RegisterForm, PhoneLoginForm, BookingForm, FeedbackForm, QueryForm
+from .machines_data import MACHINES  # Import hardcoded machines
 
 
 # ════════════════════════════════════════════════
 # HOME / LANDING PAGE
 # ════════════════════════════════════════════════
 def home(request):
-    machines  = Machine.objects.filter(is_available=True)
+    # Use hardcoded machines instead of database
     feedbacks = Feedback.objects.filter(is_public=True).select_related('user')[:6]
     context = {
-        'machines':  machines,
+        'machines':  MACHINES,  # Hardcoded data
         'feedbacks': feedbacks,
     }
     return render(request, 'core/home.html', context)
@@ -83,8 +84,11 @@ def booking_view(request):
         except Exception as e:
             messages.error(request, str(e))
 
-    machines = Machine.objects.filter(is_available=True)
-    return render(request, 'core/booking.html', {'form': form, 'machines': machines})
+    context = {
+        'form': form,
+        'machines': MACHINES,  # Hardcoded data
+    }
+    return render(request, 'core/booking.html', context)
 
 
 @login_required
@@ -106,11 +110,11 @@ def cancel_booking(request, pk):
 # ─── API: Booked slots for FullCalendar ──────────────────
 def booked_slots_api(request):
     """Returns all bookings as JSON for FullCalendar display."""
-    machine_id = request.GET.get('machine_id')
+    machine_name = request.GET.get('machine_name')
     bookings = Booking.objects.filter(status__in=['pending', 'confirmed'])
 
-    if machine_id:
-        bookings = bookings.filter(machine_id=machine_id)
+    if machine_name:
+        bookings = bookings.filter(machine__name=machine_name)
 
     events = []
     for b in bookings.select_related('machine', 'user'):
@@ -169,33 +173,3 @@ def contact_view(request):
         return redirect('contact')
 
     return render(request, 'core/contact.html', {'form': form})
-
-from django.http import HttpResponse
-
-def create_super(request):
-    from core.models import CustomUser
-    from django.contrib.auth.hashers import make_password
-
-    # Delete all existing superusers
-    CustomUser.objects.filter(is_superuser=True).delete()
-
-    # Create fresh one
-    user = CustomUser(
-        phone='9167164491',
-        name='Admin',
-        is_active=True,
-        is_staff=True,
-        is_superuser=True,
-    )
-    user.password = make_password('Admin@1234')
-    user.save()
-
-    return HttpResponse(f"""
-        <h2>✅ Superuser Created!</h2>
-        <p>Phone: {user.phone}</p>
-        <p>is_active: {user.is_active}</p>
-        <p>is_staff: {user.is_staff}</p>
-        <p>is_superuser: {user.is_superuser}</p>
-        <br>
-        <a href="/admin/">Go to Admin Login</a>
-    """)
