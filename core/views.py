@@ -93,9 +93,8 @@ def booking_view(request):
 
 @login_required
 def my_bookings(request):
-    bookings = Booking.objects.filter(user=request.user).select_related('machine')
+    bookings = Booking.objects.filter(user=request.user).order_by('-date', '-start_time')
     return render(request, 'core/my_bookings.html', {'bookings': bookings})
-
 
 @login_required
 def cancel_booking(request, pk):

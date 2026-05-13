@@ -67,8 +67,8 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     list_display  = ['machine', 'user', 'date', 'start_time', 'end_time', 'status']
-    list_filter   = ['status', 'date', 'machine']
-    search_fields = ['user__name', 'user__phone', 'machine__name']
+    list_filter   = ['status', 'date']
+    search_fields = ['user__name', 'user__phone', 'machine', 'location']
     list_editable = ['status']
     date_hierarchy = 'date'
 
